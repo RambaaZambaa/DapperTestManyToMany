@@ -16,49 +16,38 @@ namespace DapperTestManyToMany
             Stopwatch watch = new Stopwatch();
             MyClass myclass = new MyClass();
 
+
             watch.Start();
-            
 
+            var gr = Person.QueryAll();
+            foreach (Person item in gr)
+            {
+                foreach (Person elternteil in item.Eltern)
+                {
+                    Console.WriteLine($"Person {item.Name} mit Elternteil {elternteil.Name}");
 
-            var blub2 = myclass.GetPersonList();
-            Console.WriteLine("Dapper variante 2: " + watch.ElapsedMilliseconds);
-            watch.Restart();
+                }
+            }
+            //for (int i = 0; i < 50; i++)
+            //{
+            //    var blub2 = myclass.GetPersonList();
+            //    Console.WriteLine("Dapper variante 2: " + watch.ElapsedMilliseconds);
+            //    watch.Restart();
+            //}
 
-            var blub = myclass.SelectPersons();
-            Console.WriteLine("dapper variante 1: " + watch.ElapsedMilliseconds);
-            watch.Restart();
+            //for (int i = 0; i < 50; i++)
+            //{
+            //    var blub4 = myclass.querymanual();
+            //    Console.WriteLine("händisch: " + watch.ElapsedMilliseconds);
+            //    watch.Restart();
+            //}
 
-            var blub3 = myclass.SelectPersons();
-            Console.WriteLine("Dapper Variante 1: " + watch.ElapsedMilliseconds);
-            watch.Restart();
-
-            var blub4 = myclass.querymanual();
-            Console.WriteLine("händisch: " + watch.ElapsedMilliseconds);
-            watch.Restart();
-
-            blub4 = myclass.querymanual();
-            Console.WriteLine("händisch: " + watch.ElapsedMilliseconds);
-            watch.Restart();
-
-            blub4 = myclass.querymanual();
-            Console.WriteLine("händisch: " + watch.ElapsedMilliseconds);
-            watch.Restart();
-
-            blub2 = myclass.GetPersonList();
-            Console.WriteLine("Dapper variante 2: " + watch.ElapsedMilliseconds);
-            watch.Restart();
-
-            blub = myclass.SelectPersons();
-            Console.WriteLine("dapper variante 1: " + watch.ElapsedMilliseconds);
-            watch.Restart();
-
-            blub3 = myclass.SelectPersons();
-            Console.WriteLine("Dapper Variante 1: " + watch.ElapsedMilliseconds);
-            watch.Restart();
-
-            blub4 = myclass.querymanual();
-            Console.WriteLine("händisch: " + watch.ElapsedMilliseconds);
-            watch.Restart();
+            //for (int i = 0; i < 50; i++)
+            //{
+            //    var blub = myclass.SelectPersons();
+            //    Console.WriteLine("dapper variante 1: " + watch.ElapsedMilliseconds);
+            //    watch.Restart();
+            //}
 
 
             Console.ReadLine();
@@ -137,11 +126,7 @@ namespace DapperTestManyToMany
                 string query = @"SELECT p.Id, p.Name, t.Id, t.Name
                              FROM Person p INNER JOIN Person_Chor tp ON tp.Person = p.Id
                              INNER JOIN Chor t ON tp.Chor = t.Id";
-                return CreateConnection()
-        .Query<Person, Chor, Person>(
-            query,
-            (person, chor) =>
-            {
+                return CreateConnection().Query<Person, Chor, Person>( query, (person, chor) => {
                 person.Chöre.Add(chor);
                 return person;
             }
